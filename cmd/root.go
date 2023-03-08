@@ -15,13 +15,17 @@ var rootCmd = &cobra.Command{
 	Long: `Worder CLI is a word generator, and counter.
 Uses a sample from Lorem Ipsum to generate files based on different count, and size
 and provide the capability to count the number of words in these generated files.`,
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(cmd *cobra.Command, args []string) {},
+}
 
-	},
+func init() {
+	rootCmd.AddCommand(generatorCmd)
+	rootCmd.AddCommand(counterCmd)
 }
 
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
+		// todo: check the below hint
 		fmt.Fprintf(os.Stderr, "Whoops. There was an error while executing your CLI '%s'\n", err)
 		os.Exit(1)
 	}
