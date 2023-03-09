@@ -4,7 +4,9 @@ import (
 	"bufio"
 )
 
-func Generate(size int, unit string, count int, destination string) {
+// Generate is for generating files
+// based on the given arguments
+func Generate(size int, unit string, count int, dest string) {
 
 }
 
