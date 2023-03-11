@@ -37,8 +37,9 @@ func (g TxtFileGenerator) Generate() error {
 		if err != nil {
 			return err
 		}
-		// todo: create unit converter
-		err = write(created, body, g.Size)
+
+		size := convert(g.Size, g.Unit)
+		err = write(created, body, size)
 		if err != nil {
 			return err
 		}
@@ -78,4 +79,14 @@ func mkdir(destination string) error {
 		return fmt.Errorf("unable to make directory. %w", err)
 	}
 	return nil
+}
+
+func convert(size int, unit string) int {
+	switch unit {
+	case "mb":
+		size *= 1000000
+	case "kb":
+		size *= 1000
+	}
+	return size
 }
