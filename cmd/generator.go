@@ -6,7 +6,6 @@ import (
 	"strconv"
 	"strings"
 	"worder/errors"
-	"worder/pkg/generator"
 )
 
 type ByteUnit string
@@ -37,8 +36,8 @@ var generatorCmd = &cobra.Command{
 	Long:    "", // todo:
 	Example: "worder generate --size=100MB --count=50 --path=./data",
 	Run: func(cmd *cobra.Command, args []string) {
-		fileSize, unit := parse(size)
-		generator.Generate(fileSize, unit, count, path)
+		//fileSize, unitSize := parse(size)
+		//generator.GenerateFiles(fileSize, unitSize, count, path)
 	},
 }
 
@@ -55,6 +54,7 @@ func init() {
 // the value, and the unit can be: MB, or KB
 // for the wrong size the program will
 // expose error message for the client
+// todo: return an error
 func parse(input string) (int, string) {
 	inputLen := len(input)
 	if inputLen <= 2 {
