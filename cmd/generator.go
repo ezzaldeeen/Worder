@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"strings"
 	"worder/errors"
+	"worder/pkg/generatorv1"
 )
 
 type ByteUnit string
@@ -33,11 +34,16 @@ var generatorCmd = &cobra.Command{
 	Use:     "generate",
 	Aliases: []string{"gen"},
 	Short:   "Files generator based on sample from Lorem Ipsum",
-	Long:    "", // todo:
 	Example: "worder generate --size=100MB --count=50 --path=./data",
 	Run: func(cmd *cobra.Command, args []string) {
-		//fileSize, unitSize := parse(size)
-		//generator.GenerateFiles(fileSize, unitSize, count, path)
+		fileSize, unitSize := parse(size)
+		geor := generatorv1.TxtFileGenerator{
+			Size:        fileSize,
+			Unit:        unitSize,
+			Count:       count,
+			Destination: path,
+		}
+		geor.Generate()
 	},
 }
 
