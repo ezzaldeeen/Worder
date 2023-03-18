@@ -12,7 +12,7 @@ var rootCmd = &cobra.Command{
 	Use:     "worder",
 	Version: version,
 	Short:   "worder - simple CLI to generate and count words",
-	Long: `Worder CLI is a word generator, and counter.
+	Long: `Worder CLI is a word generating, and counter.
 Uses a sample from Lorem Ipsum to generate files based on different count, and size
 and provide the capability to count the number of words in these generated files.`,
 	Run: func(cmd *cobra.Command, args []string) {},

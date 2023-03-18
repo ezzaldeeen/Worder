@@ -1,9 +1,14 @@
 package main
 
 import (
-	"worder/cmd"
+	"go.uber.org/zap"
+	"worder/pkg/generating"
 )
 
 func main() {
-	cmd.Execute()
+
+	logger, _ := zap.NewDevelopment()
+
+	generator := generating.NewTXTFilesGenerator(logger.Sugar(), "/sdfds", "", 0, 0)
+	generator.Generate()
 }

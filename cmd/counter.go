@@ -13,6 +13,7 @@ var counterCmd = &cobra.Command{
 	Long:    "",
 	Example: "worder count --path=./data",
 	Run: func(cmd *cobra.Command, args []string) {
+		// todo: depend on interface
 		counter := counterv1.Counter{Path: sourcePath}
 		wordCount, err := counter.Count()
 		if err != nil {

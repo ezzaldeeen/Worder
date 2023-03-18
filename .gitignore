@@ -16,3 +16,6 @@
 
 # Golang
 .idea/
+
+# Darwin MacOS
+.DS_Store

@@ -10,7 +10,7 @@ import (
 // todo: use viper to set the configuration
 const samplePath = "./resources/sample.txt"
 
-// TxtFileGenerator is a TXT file type generator
+// TxtFileGenerator is a TXT file type generating
 // it generates new files based on the given fields
 // and uses the sample from Lorem Ipsum
 type TxtFileGenerator struct {
