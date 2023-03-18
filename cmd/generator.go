@@ -1,23 +1,18 @@
 package cmd
 
 import (
-	"fmt"
 	"github.com/spf13/cobra"
-	"runtime"
-	"strconv"
-	"strings"
-	"sync"
-	"worder/pkg/generatorv2"
+	"go.uber.org/zap"
+	"os"
+	"worder/custom"
+	"worder/pkg/generating"
+	"worder/utils"
 )
 
 type ByteUnit string
 
-// MB represents MegaByte
-// KB represents KiloByte
-const (
-	MB ByteUnit = "mb"
-	KB ByteUnit = "kb"
-)
+// sourceSamplePath the path of the sample template (Lorem Ipsum)
+const sourceSamplePath string = "./resources/sample.txt"
 
 // size of the generated files
 // count of the generated files
@@ -26,6 +21,8 @@ var (
 	size  string
 	count int
 	path  string
+
+	logger = utils.GetLogger(zap.NewDevelopment)
 )
 
 // generatorCmd is a command in the Worder ClI
@@ -37,20 +34,22 @@ var generatorCmd = &cobra.Command{
 	Short:   "Files generating based on sample from Lorem Ipsum",
 	Example: "worder generate --size=100MB --count=50 --path=./data",
 	Run: func(cmd *cobra.Command, args []string) {
-		fileSize, unitSize := parse(size)
-		// todo: depend on interface
-		geor := generatorv2.TxtFileGenerator{
-			Size:        fileSize,
-			Unit:        unitSize,
-			Count:       count,
-			Destination: path,
+		size, unit, err := utils.ParseSize(size)
+		if err != nil {
+			logger.Error(err)
+			os.Exit(custom.InvalidSizeErrCode)
 		}
-		wg := sync.WaitGroup{}
-		wg.Add(count)
 
-		geor.Generate(&wg)
-		wg.Wait()
-		fmt.Println(runtime.NumGoroutine())
+		size, err = utils.ConvertToByte(size, unit)
+		if err != nil {
+			logger.Error(err)
+			os.Exit(custom.InvalidUnitErrCode)
+		}
+
+		generator := generating.NewTXTFilesGenerator(
+			logger, sourceSamplePath, path, count, size)
+
+		generator.Generate()
 	},
 }
 
@@ -61,30 +60,4 @@ func init() {
 		50, "The number of generated files")
 	generatorCmd.Flags().StringVarP(&path, "path", "p",
 		"./data", "Directory destination")
-}
-
-// parse the size input expected to return
-// the value, and the unit can be: MB, or KB
-// for the wrong size the program will
-// expose error message for the client
-// todo: return an error
-func parse(input string) (int, string) {
-	inputLen := len(input)
-	if inputLen <= 2 {
-		//log.Fatalf("- %s\n", custom.InvalidUnitErr)
-	}
-
-	unit := strings.ToLower(input[inputLen-2:])
-	value, err := strconv.Atoi(input[:inputLen-2])
-
-	if err != nil {
-		//log.Fatalf("- %s\n", custom.InvalidSizeValue)
-	}
-
-	switch ByteUnit(unit) {
-	case MB, KB:
-		return value, unit
-	}
-	//log.Fatalf("- %s\n", custom.InvalidSizeValue)
-	return 0, ""
 }

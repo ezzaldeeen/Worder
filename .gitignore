@@ -19,3 +19,6 @@
 
 # Darwin MacOS
 .DS_Store
+
+# root
+data/
