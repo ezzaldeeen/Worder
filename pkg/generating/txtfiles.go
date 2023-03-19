@@ -15,6 +15,10 @@ import (
 // targetFileExt the extension of the generated file
 const targetFileExt = "txt"
 
+type FilesGenerator interface {
+	Generate()
+}
+
 // TXTFilesGenerator is a special generator for generating text
 // based on the given source, count, and size (in bytes).
 // the generated files will be on a new directory based on the destination

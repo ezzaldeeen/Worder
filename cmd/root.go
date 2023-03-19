@@ -3,10 +3,15 @@ package cmd
 import (
 	"fmt"
 	"github.com/spf13/cobra"
+	"go.uber.org/zap"
 	"os"
+	"worder/utils"
 )
 
-var version = "0.0.1"
+var (
+	version = "0.0.1"
+	logger  = utils.GetLogger(zap.NewDevelopment)
+)
 
 var rootCmd = &cobra.Command{
 	Use:     "worder",

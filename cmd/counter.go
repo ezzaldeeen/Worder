@@ -3,7 +3,7 @@ package cmd
 import (
 	"fmt"
 	"github.com/spf13/cobra"
-	"worder/pkg/counterv1"
+	"worder/pkg/counting"
 )
 
 var sourcePath string
@@ -13,13 +13,10 @@ var counterCmd = &cobra.Command{
 	Long:    "",
 	Example: "worder count --path=./data",
 	Run: func(cmd *cobra.Command, args []string) {
-		// todo: depend on interface
-		counter := counterv1.Counter{Path: sourcePath}
-		wordCount, err := counter.Count()
-		if err != nil {
-			fmt.Println(err)
-		}
-		fmt.Println("Total words count:", wordCount)
+		counter := counting.NewWordCounter(
+			logger, sourcePath)
+		totalWords := counter.Count()
+		fmt.Println("Total Number of Words:", totalWords)
 	},
 }
 

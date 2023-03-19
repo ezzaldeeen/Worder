@@ -1,8 +1,6 @@
 package main
 
-import (
-	"worder/cmd"
-)
+import "worder/cmd"
 
 func main() {
 	cmd.Execute()

@@ -2,6 +2,15 @@ package custom
 
 import "errors"
 
+const (
+	SrcFileLoadingErrCode = 12
+	SrcFileReadingErrCode = 13
+	FileCreatingErrCode   = 14
+	FileWritingErrCode    = 15
+	InvalidSizeErrCode    = 16
+	InvalidUnitErrCode    = 17
+)
+
 var (
 	InvalidSizeErr    = errors.New("invalid size input, your input should look like: xxMB, xxKB")
 	InvalidUnitErr    = errors.New("invalid unit, available units: KB, MB, and GB")

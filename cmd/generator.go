@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"github.com/spf13/cobra"
-	"go.uber.org/zap"
 	"os"
 	"worder/custom"
 	"worder/pkg/generating"
@@ -21,8 +20,6 @@ var (
 	size  string
 	count int
 	path  string
-
-	logger = utils.GetLogger(zap.NewDevelopment)
 )
 
 // generatorCmd is a command in the Worder ClI
