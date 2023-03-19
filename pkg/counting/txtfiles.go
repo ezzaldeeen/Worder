@@ -6,6 +6,7 @@ import (
 	"io"
 	"os"
 	"path"
+	"strings"
 	"sync"
 	"sync/atomic"
 )
@@ -48,9 +49,10 @@ func (wc *WordCounter) Count() uint64 {
 		go func(wg *sync.WaitGroup, file *os.File) {
 			defer file.Close()
 			reader := bufio.NewReader(currFile)
+
 		loop:
 			for {
-				_, err := reader.ReadBytes(' ')
+				buf, err := reader.ReadString('\n')
 				if err != nil {
 					switch err {
 					case io.EOF:
@@ -59,10 +61,9 @@ func (wc *WordCounter) Count() uint64 {
 						wc.logger.Error(err)
 					}
 				}
-				atomic.AddUint64(&counter, 1)
+				words := strings.Fields(buf)
+				atomic.AddUint64(&counter, uint64(len(words)))
 			}
-			// for the last word in the file
-			atomic.AddUint64(&counter, 1)
 			wg.Done()
 		}(&wg, currFile)
 	}
