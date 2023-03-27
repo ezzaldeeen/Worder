@@ -1,6 +1,8 @@
 package utils
 
-import "worder/custom"
+import (
+	"worder/pkg"
+)
 
 type StdUnit int
 
@@ -23,6 +25,6 @@ func ConvertToByte(value int, unit StdUnit) (int, error) {
 	case GigaByte:
 		return value * gb, nil
 	default:
-		return 0, custom.InvalidUnitErr
+		return 0, pkg.InvalidUnitErr
 	}
 }

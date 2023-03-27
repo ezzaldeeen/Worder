@@ -3,15 +3,15 @@ package cmd
 import (
 	"github.com/spf13/cobra"
 	"os"
-	"worder/custom"
+	"worder/pkg"
 	"worder/pkg/generating"
 	"worder/utils"
 )
 
-type ByteUnit string
-
 // sourceSamplePath the path of the sample template (Lorem Ipsum)
-const sourceSamplePath string = "./resources/sample.txt"
+const (
+	sourceSamplePath string = "./resources/sample.txt"
+)
 
 // size of the generated files
 // count of the generated files
@@ -31,16 +31,17 @@ var generatorCmd = &cobra.Command{
 	Short:   "Files generating based on sample from Lorem Ipsum",
 	Example: "worder generate --size=100MB --count=50 --path=./data",
 	Run: func(cmd *cobra.Command, args []string) {
+
 		size, unit, err := utils.ParseSize(size)
 		if err != nil {
 			logger.Error(err)
-			os.Exit(custom.InvalidSizeErrCode)
+			os.Exit(pkg.InvalidSizeErrCode)
 		}
 
 		size, err = utils.ConvertToByte(size, unit)
 		if err != nil {
 			logger.Error(err)
-			os.Exit(custom.InvalidUnitErrCode)
+			os.Exit(pkg.InvalidUnitErrCode)
 		}
 
 		generator := generating.NewTXTFilesGenerator(

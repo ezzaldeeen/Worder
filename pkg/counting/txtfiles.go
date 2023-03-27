@@ -48,6 +48,7 @@ func (wc *WordCounter) Count() uint64 {
 
 		go func(wg *sync.WaitGroup, file *os.File) {
 			defer file.Close()
+			// todo: try to increase the buffer size
 			reader := bufio.NewReader(currFile)
 
 		loop:
@@ -56,8 +57,9 @@ func (wc *WordCounter) Count() uint64 {
 				if err != nil {
 					switch err {
 					case io.EOF:
-						break loop
+						break loop // todo: use return
 					default:
+						// todo: should exit
 						wc.logger.Error(err)
 					}
 				}

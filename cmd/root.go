@@ -30,7 +30,7 @@ func init() {
 
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
-		// todo: check the below hint
+		// todo: change it to log (debug)
 		fmt.Fprintf(os.Stderr, "Whoops. There was an error while executing your CLI '%s'\n", err)
 		os.Exit(1)
 	}

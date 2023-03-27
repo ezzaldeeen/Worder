@@ -1,7 +1,10 @@
-package custom
+package pkg
 
 import "errors"
 
+// todo: SrcFileLoadingErrCode should be ErrCodeSrcFileLoading, to be faster to find
+// todo: SrcFileLoadingErrCode should be ErrCodeLoadingSrcFile
+// todo: these errors should be in the usage (closer to the usage)
 const (
 	SrcFileLoadingErrCode = 12
 	SrcFileReadingErrCode = 13
@@ -11,6 +14,7 @@ const (
 	InvalidUnitErrCode    = 17
 )
 
+// todo: InvalidSizeErr should be ErrInvalidSize, to be faster to find
 var (
 	InvalidSizeErr    = errors.New("invalid size input, your input should look like: xxMB, xxKB")
 	InvalidUnitErr    = errors.New("invalid unit, available units: KB, MB, and GB")
