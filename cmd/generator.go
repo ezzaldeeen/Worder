@@ -48,6 +48,12 @@ var generatorCmd = &cobra.Command{
 			logger, sourceSamplePath, path, count, size)
 
 		generator.Generate()
+
+		/*
+			provider := SourceProvider{
+
+			}
+		*/
 	},
 }
 
