@@ -2,7 +2,6 @@ package counter
 
 import (
 	"context"
-	"fmt"
 	"os"
 	"path"
 	"sync"
@@ -46,8 +45,6 @@ func NewWordCounter(ch <-chan string) *WordCounter {
 func (wc WordCounter) Run(ctx context.Context, wg *sync.WaitGroup) {
 	select {
 	case <-ctx.Done():
-		fmt.Println("")
 	default:
-		fmt.Println("work")
 	}
 }
