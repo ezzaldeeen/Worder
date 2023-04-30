@@ -2,34 +2,31 @@ package main
 
 import (
 	"fmt"
-	"os"
-	"path"
-	"time"
+	"go.uber.org/zap"
+	"sync"
+	"sync/atomic"
+	"worder/counter"
+	"worder/workerpool"
 )
 
 func main() {
+	logger, _ := zap.NewDevelopment()
+	a := new(atomic.Uint64)
 	ch := make(chan string)
 
-	entries, err := os.ReadDir("data")
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	for i := 0; i < 2; i++ {
-		go func() {
-			for _, entry := range entries {
-				filePath := path.Join("data", entry.Name())
-				ch <- filePath
-			}
-		}()
-	}
-
+	wg := new(sync.WaitGroup)
+	dispatcher := counter.NewFileDispatcher("data", ch)
 	go func() {
-		for filePath := range ch {
-			fmt.Println(filePath)
+		err := dispatcher.Dispatch()
+		if err != nil {
+			logger.Error(err.Error())
 		}
 	}()
 
-	time.Sleep(5 * time.Second)
+	wc := counter.NewWordCounter(ch, a, logger)
 
+	wp := workerpool.NewWorkerPool(2, wc)
+	wp.Start(wg)
+
+	fmt.Println(a.Load())
 }

@@ -30,6 +30,7 @@ func NewWorkerPool(numOfWorkers int, runnable Runnable) *WorkerPool {
 
 // Start starting the execution based on the number of workers
 func (wp *WorkerPool) Start(wg *sync.WaitGroup) {
+	wg.Add(wp.numOfWorkers)
 	for i := 0; i < wp.numOfWorkers; i++ {
 		go func(wg *sync.WaitGroup) {
 			wp.runnable.Run(wp.ctx, wg)

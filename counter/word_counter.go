@@ -7,6 +7,7 @@ import (
 	"os"
 	"path"
 	"sync"
+	"sync/atomic"
 )
 
 // FilesDispatcher sending the file paths through paths channel
@@ -39,40 +40,48 @@ func (fd FilesDispatcher) Dispatch() error {
 }
 
 type WordCounter struct {
-	logger    zap.Logger
-	filePaths <-chan string
+	paths   <-chan string
+	counter *atomic.Uint64
+	logger  *zap.Logger
 }
 
-func NewWordCounter(ch <-chan string) *WordCounter {
+func NewWordCounter(
+	paths <-chan string,
+	counter *atomic.Uint64,
+	logger *zap.Logger) *WordCounter {
 	return &WordCounter{
-		filePaths: ch,
+		paths:   paths,
+		counter: counter,
+		logger:  logger,
 	}
 }
 
 func (wc WordCounter) Run(ctx context.Context, wg *sync.WaitGroup) {
+	defer wg.Done()
 	select {
 	case <-ctx.Done():
 		wc.logger.Error("context cancelled")
+		return
 	default:
-		filePath := <-wc.filePaths
-		file, err := os.Open(filePath)
-		defer file.Close()
-		if err != nil {
-			wc.logger.Error("unable to open the file:", zap.Field{
-				Key:    "path",
-				String: filePath,
-			})
-		}
-
-		reader := bufio.NewReader(file)
-		for {
-			b, err := reader.ReadByte()
+		for filePath := range wc.paths {
+			file, err := os.Open(filePath)
 			if err != nil {
-				return
+				wc.logger.Error("unable to open the file:", zap.Field{
+					Key:    "path",
+					String: filePath,
+				})
 			}
-			if b == ' ' {
-				// todo: increase counter
+			reader := bufio.NewReader(file)
+			for {
+				b, err := reader.ReadByte()
+				if err != nil {
+					return
+				}
+				if b == ' ' {
+					wc.counter.Add(1)
+				}
 			}
+			file.Close()
 		}
 	}
 }
