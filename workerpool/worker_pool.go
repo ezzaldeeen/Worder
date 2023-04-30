@@ -7,7 +7,7 @@ import (
 
 // Runnable for the executable tasks by the worker pool
 type Runnable interface {
-	Run(ctx context.Context, wg *sync.WaitGroup)
+	Run(w int, ctx context.Context, wg *sync.WaitGroup)
 }
 
 // WorkerPool the controller of the execution behavior
@@ -32,9 +32,9 @@ func NewWorkerPool(numOfWorkers int, runnable Runnable) *WorkerPool {
 func (wp *WorkerPool) Start(wg *sync.WaitGroup) {
 	wg.Add(wp.numOfWorkers)
 	for i := 0; i < wp.numOfWorkers; i++ {
-		go func(wg *sync.WaitGroup) {
-			wp.runnable.Run(wp.ctx, wg)
-		}(wg)
+		go func(wg *sync.WaitGroup, w int) {
+			wp.runnable.Run(w, wp.ctx, wg)
+		}(wg, i)
 	}
 	wg.Wait()
 }

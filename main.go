@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"go.uber.org/zap"
+	"runtime"
 	"sync"
 	"sync/atomic"
 	"worder/counter"
@@ -25,8 +26,9 @@ func main() {
 
 	wc := counter.NewWordCounter(ch, a, logger)
 
-	wp := workerpool.NewWorkerPool(2, wc)
+	wp := workerpool.NewWorkerPool(1, wc)
 	wp.Start(wg)
 
-	fmt.Println(a.Load())
+	fmt.Println("# of Goroutines:", runtime.NumGoroutine())
+	fmt.Println("# of Words:", a.Load())
 }
