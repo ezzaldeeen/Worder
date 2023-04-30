@@ -24,7 +24,7 @@ and provide the capability to count the number of words in these generated files
 }
 
 func init() {
-	rootCmd.AddCommand(generatorCmd)
+	//rootCmd.AddCommand(generatorCmd)
 	rootCmd.AddCommand(counterCmd)
 }
 
