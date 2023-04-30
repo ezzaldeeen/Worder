@@ -18,13 +18,13 @@ var counterCmd = &cobra.Command{
 	Use:     "count",
 	Short:   "Word counter for the generated files",
 	Long:    "",
-	Example: "worder count --path=./data",
+	Example: "worder count --path=./data --wpsize=10",
 	Run: func(cmd *cobra.Command, args []string) {
 		logger, _ := zap.NewDevelopment()
 		atomicCounter := new(atomic.Uint64)
 		pathsChannel := make(chan string)
 		wg := new(sync.WaitGroup)
-		dispatcher := counter.NewFileDispatcher("data", pathsChannel)
+		dispatcher := counter.NewFileDispatcher(sourcePath, pathsChannel)
 
 		go func() {
 			err := dispatcher.Dispatch()
@@ -33,10 +33,10 @@ var counterCmd = &cobra.Command{
 			}
 		}()
 
-		wc := counter.NewWordCounter(pathsChannel, atomicCounter, logger)
-		wp := workerpool.NewWorkerPool(1, wc)
+		wordCounter := counter.NewWordCounter(pathsChannel, atomicCounter, logger)
+		workerPool := workerpool.NewWorkerPool(numOfWorkers, wordCounter)
 
-		wp.Start(wg)
+		workerPool.Start(wg)
 
 		fmt.Println("Total Number of Words:", atomicCounter.Load())
 	},
