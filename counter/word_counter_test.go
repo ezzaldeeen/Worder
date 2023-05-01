@@ -8,35 +8,36 @@ import (
 	"sync"
 	"sync/atomic"
 	"testing"
+	"time"
 	"worder/workerpool"
 )
 
-func BenchmarkWordCounter_Run(b *testing.B) {
+func TestWordCounter_Run(t *testing.T) {
 	logger, _ := zap.NewDevelopment()
 	atomicCounter := new(atomic.Uint64)
+	start := time.Now()
 
-	for _, v := range []int{1, 2, 3, 4} {
-		b.Run(fmt.Sprintf("worker_pool_size_%d", v), func(b *testing.B) {
-			for i := 0; i < b.N; i++ {
-				pathsChannel := make(chan string)
-				wg := new(sync.WaitGroup)
-				// todo: change path
-				dispatcher := NewFileDispatcher("/Users/ezzaldeen/Hands-on/Golang/worder/data", pathsChannel)
+	for _, v := range []int{50} {
+		t.Run(fmt.Sprintf("worker_pool_size_%d", v), func(t *testing.T) {
+			pathsChannel := make(chan string)
+			wg := new(sync.WaitGroup)
+			// todo: change path
+			dispatcher := NewFileDispatcher("/Users/ezzaldeen/Hands-on/Golang/worder/data", pathsChannel)
 
-				go func() {
-					err := dispatcher.Dispatch()
-					if err != nil {
-						logger.Error(err.Error())
-					}
-				}()
-				wc := NewWordCounter(pathsChannel, atomicCounter, logger)
+			go func() {
+				err := dispatcher.Dispatch()
+				if err != nil {
+					logger.Error(err.Error())
+				}
+			}()
+			wc := NewWordCounter(pathsChannel, atomicCounter, logger)
 
-				wp := workerpool.NewWorkerPool(v, wc)
-				wp.Start(wg)
+			wp := workerpool.NewWorkerPool(v, wc)
+			wp.Start(wg)
 
-			}
 		})
 	}
+	fmt.Println("time:", time.Since(start).Seconds())
 }
 
 func TestNewFileDispatcher(t *testing.T) {
@@ -58,7 +59,7 @@ func TestNewFileDispatcher(t *testing.T) {
 	}
 }
 
-func TestWordCounter_Run(t *testing.T) {
+func TestWordCounters_Run(t *testing.T) {
 	type fields struct {
 		paths   <-chan string
 		counter *atomic.Uint64

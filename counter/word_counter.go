@@ -3,7 +3,6 @@ package counter
 import (
 	"bufio"
 	"context"
-	"fmt"
 	"go.uber.org/zap"
 	"os"
 	"path"
@@ -59,32 +58,38 @@ func NewWordCounter(
 
 func (wc WordCounter) Run(w int, ctx context.Context, wg *sync.WaitGroup) {
 	defer wg.Done()
-	select {
-	case <-ctx.Done():
-		wc.logger.Error("context cancelled")
-		return
-	default:
-		for filePath := range wc.paths {
+	// todo:
+	for filePath := range wc.paths {
+		select {
+		case <-ctx.Done():
+			return
+		default:
 			file, err := os.Open(filePath)
-			fmt.Println("WorkerID:", w, "start:", filePath)
 			if err != nil {
 				wc.logger.Error("unable to open the file:", zap.Field{
 					Key:    "path",
 					String: filePath,
 				})
 			}
+			defer file.Close()
+
 			reader := bufio.NewReader(file)
+
+			var c uint64
 			for {
+				// todo: use rune
+				// todo: read line
 				b, err := reader.ReadByte()
 				if err != nil {
+					// todo: handle EOF, and actual errors
 					break
 				}
 				if b == ' ' {
-					wc.counter.Add(1)
+					c++
 				}
 			}
-			fmt.Println("WorkerID:", w, "finish:", filePath)
-			file.Close()
+			wc.counter.Add(c)
 		}
+
 	}
 }
