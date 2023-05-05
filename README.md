@@ -18,4 +18,4 @@ go install worder
 
 ## Usage
 
-To use Worder, navigate to the directory where you installed it and run the worder command followed by the desired command.:
+To use Worder, navigate to the directory where you installed it and run the worder command followed by the desired command:
